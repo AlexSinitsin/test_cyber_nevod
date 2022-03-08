@@ -7,7 +7,7 @@
         входящего звонка</p>
       <div class="capcha">
         <p class="tel">+7 (999) 999</p>
-        <input type="text" @keyup="inputCode" v-model="code" placeholder="_ _-_ _">
+        <input type="text" ref="phone" pattern="[0-9]{1}[0-9]{1}-[0-9]{1}[0-9]{1}" @keyup="inputCode" v-model="code" placeholder="_ _-_ _">
       </div>
       <p class="green_text">{{`Позвонить ещё раз через ${updateTime} сек.`}}</p>
       <div class="button" @click="goBack">Вернуться назад</div>
@@ -45,10 +45,11 @@
     methods: {
       inputCode() {
         console.log(this.code)
-        if (this.code.length === 4) {
-          this.dataStepTwo.code = this.code;
+        const x = this.$refs.phone.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,1})(\d{0,1})(\d{0,1})/);
+        this.code = x[1] + '' +  x[2] + '-' + x[3] + '' + x[4];
+        if (this.code.length === 5) {
+          this.dataStepTwo.code = x[1] + '' + x[2] + '' + x[3] + '' + x[4];
           this.dataStepTwo.phone = this.$store.state.dataStepOne.phone
-          //   console.log(this.dataStepTwo)
           this.$store.dispatch('submitDataStepTwo', this.dataStepTwo)
           this.dataStepTwo.code = ''
         }
@@ -187,7 +188,7 @@
     font-family: PT Sans;
     font-style: normal;
     font-weight: normal;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 22px;
     color: #777777;
     padding-left: 18px;
